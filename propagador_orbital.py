@@ -267,7 +267,7 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
     solucao['distancia'] = np.sqrt(solucao['X_perifocal']**2 + solucao['Y_perifocal']**2)
 
     df = pd.DataFrame()
-    phi = []
+    psi = []
     for i in range(0, len(solution), 1):
         q0 = solucao.iloc[i, 6]
         q1 = solucao.iloc[i, 7]
@@ -275,14 +275,14 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
         q3 = solucao.iloc[i, 9]
         a = np.arctan2(2*(q1*q3 - q0*q2), 2*(q2*q3 + q0*q1))
         if np.linalg.norm(a) < 0.000000001:
-            phi.append(0.0)
+            psi.append(0.0)
         elif np.linalg.norm(np.linalg.norm(a) - np.pi) < 0.000001:
-            phi.append(0.0)
+            psi.append(0.0)
         else:
-            phi.append(a)
+            psi.append(a)
 
-    dfphi = pd.DataFrame(np.unwrap(phi), columns=['PHI'])
-    df = pd.concat([df, dfphi], axis=1)
+    dfpsi = pd.DataFrame(np.unwrap(psi), columns=['PSI'])
+    df = pd.concat([df, dfpsi], axis=1)
 
     teta = []
     for i in range(0, len(solution), 1):
@@ -301,7 +301,7 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
     dfteta = pd.DataFrame(teta, columns=['TETA'])
     df = pd.concat([df, dfteta], axis=1)
 
-    psi = []
+    phi = []
     for i in range(0, len(solution), 1):
         q0 = solucao.iloc[i, 6]
         q1 = solucao.iloc[i, 7]
@@ -310,14 +310,14 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
         a = np.arctan2((2*q1*q3 + 2*q0*q2), -(2*q2*q3 - 2*q0*q1))
 
         if np.linalg.norm(a) < 0.000000001:
-            psi.append(0.0)
+            phi.append(0.0)
         elif np.linalg.norm(np.linalg.norm(a) - np.pi) < 0.000001:
-            psi.append(0.0)
+            phi.append(0.0)
         else:
-            psi.append(a)
+            phi.append(a)
 
-    dfpsi = pd.DataFrame(np.unwrap(psi), columns=['PSI'])
-    df = pd.concat([df, dfpsi], axis=1)
+    dfphi = pd.DataFrame(np.unwrap(phi), columns=['PHI'])
+    df = pd.concat([df, dfphi], axis=1)
     '''df = pd.DataFrame()
     df['PHI'] = np.unwrap(np.arctan2(2*(solucao['q2']*solucao['q3'] - solucao['q0']*solucao['q1']), 2*(solucao['q1']*solucao['q3'] + solucao['q0']*solucao['q2'])))
     df['TETA'] = np.arccos(2*(solucao['q0']**2 + solucao['q3']**2) - 1)

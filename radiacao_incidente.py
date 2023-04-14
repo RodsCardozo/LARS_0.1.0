@@ -93,11 +93,9 @@ def calor_incidente(posicao_orientacao, radiacao_solar, radiacao_terra, emissivi
 
     import os.path
     Posicao_orientacao.to_csv(os.path.join('./results/', 'Posicao_orientacao.csv'), sep=',')
+    tupla1 = list(zip(Posicao_orientacao['X_ECI'], Posicao_orientacao['Y_ECI'], Posicao_orientacao['Z_ECI']))
+    vetor_posicao = [np.array(tupla) for tupla in tupla1]
 
-    vetor_posicao = []
-    for i in range(0, len(prop_orb), 1):
-        vetor_posicao.append(np.array([np.array(Posicao_orientacao.iloc[i, 3]), np.array(Posicao_orientacao.iloc[i, 4]),
-                      np.array(Posicao_orientacao.iloc[i, 5])]))
     '''Inicio do calculo de radiacao'''
     print('Calculando radiacao solar')
     Qs1 = []
