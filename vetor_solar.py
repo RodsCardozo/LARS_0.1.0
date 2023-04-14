@@ -52,30 +52,114 @@ def vetor_solar(date):
     vet_sol = [x * 149597870.7 for x in r_sol_vet]
     return vet_sol
 
-if __name__ == '__main__':
-    from datetime import datetime
+
+def beta_angle(date, inc, raan):
+
     import numpy as np
-    input_string = '04/05/2023 16:00:00'
-    data = datetime.strptime(input_string, "%m/%d/%Y %H:%M:%S")
-    a = vetor_solar(data)
-    vetor_solar_normalizado = [x / np.linalg.norm(a) for x in a]
-    print(vetor_solar(data))
-    print(f'vetor solar normalizado : {vetor_solar_normalizado}')
-    from datetime import timedelta
-    b = [data + timedelta(days=x) for x in range(0,365)]
-    print(b)
-    vetor_solar_anual = [vetor_solar(x) for x in b]
-    print(vetor_solar_anual)
+    import ephem
+    import math
+    from datetime import datetime
+    def utc_to_jd(date):
+        # separa a string data
+        dt = date
 
+        # converte datetime para tempo juliano
+        a = (14 - dt.month) // 12
+        y = dt.year + 4800 - a
+        m = dt.month + 12 * a - 3
+        jd = dt.day + (153 * m + 2) // 5 + 365 * y + y // 4 - y // 100 + y // 400 - 32045
+
+        # adiciona fração do dia
+        frac_day = (dt.hour - 12) / 24.0 + dt.minute / 1440.0 + dt.second / 86400.0
+        jd += frac_day
+
+        return jd
+
+    if type(date) == str:
+        input_string = date
+        print((input_string))
+        date = datetime.strptime(input_string, '%m/%d/%Y %H:%M:%S')
+    else:
+        date = date
+    # calcula a data juliana para hoje
+
+    data = datetime(month=date.month, day=date.day, year=date.year, hour=date.hour, minute=date.minute)
+
+    # calcula o século juliano
+    T_uti = (utc_to_jd(data) - 2451545.0) / 36525
+
+    T_tdb = T_uti
+
+    # calcula a longitude média do sol
+    lamb_M = (280.46 + 36000.771 * T_tdb) % 360
+
+    # anomalida média do sol
+    M_sol = 357.5291092 + 35999.05034*T_tdb
+
+    # Criando um objeto para a data desejada
+    data = ephem.Date(date)
+
+    # Criando um objeto para o Sol
+    sol = ephem.Sun()
+
+    # Atualizando as coordenadas do Sol para a data desejada
+    sol.compute(data)
+
+    # Obtendo a declinação em radianos
+    dec = sol.dec
+
+    # inclincaçao da orbita terrestre
+    e = np.radians(23.4)
+
+    # longitude da ecliptica
+    lamb_ecl = lamb_M + 1.914666471 * np.sin(np.radians(M_sol)) + 0.019994643*np.sin(2*M_sol)
+
+    # vetor do plano da eclipse
+    s = [np.cos(np.radians(lamb_ecl)), np.sin(np.radians(lamb_ecl))*np.cos(e),
+         np.sin(np.radians(lamb_ecl))*np.sin(e)]
+
+    # vetor do plano do satelite
+    raan = np.radians(raan)
+    inc = np.radians(inc)
+    n = [np.sin(raan) * np.sin(inc), -np.cos(raan) * np.sin(inc), np.cos(inc)]
+
+    beta_angle = np.arcsin(np.dot(s,n))
+
+    return beta_angle
+
+def taxa_precessao(ecc, semi_eixo_maior, inc):
+    import math
+    mu = 398600
+    R_E = 6371.0
+    j2 = 0.0010826
+    omega_pre = -((3 * math.sqrt(mu) * j2 * R_E**2) / (2 * (1 - ecc**2)**2 * semi_eixo_maior**(7/2))) * math.cos(np.radians(inc))
+    return omega_pre
+
+
+
+
+
+
+if __name__ == '__main__':
+    import numpy as np
+    beta_iss = beta_angle('03/21/2020 17:00:00', 70.6, 0.0)
     import pandas as pd
-    df = pd.DataFrame(vetor_solar_anual, columns=['X_sun', 'Y_sun', 'Z_sun'])
-    lat = lambda row: np.degrees(np.arcsin(row[2] / np.linalg.norm(row)))
-    long = lambda row: np.degrees(np.arctan2(row[1], row[0]))
-    df['latitude'] = np.degrees(np.arcsin(df['Z_sun'] / np.linalg.norm([df['X_sun'], df['Y_sun'], df['Z_sun']])))   #df.apply(lat, axis=1)
-    df['longitude'] = np.degrees(np.arctan2(df['Y_sun'], df['X_sun']))  #df.apply(long, axis=1)
-    print(df)
+    from datetime import datetime, timedelta
+    dia_ini = '01/01/2023 17:00:00'
+    ini_date = datetime.strptime(dia_ini, "%m/%d/%Y %H:%M:%S")
+    data = [ini_date + timedelta(days=x) for x in range(0,365)]
+    inc = 51.6
+    raan0 = 0.0
+    raan = []
+    for i in range(0, 365):
+        raan_var = raan0 + taxa_precessao(0.0, 6779.0, inc) * 24 * 60 * 60
 
+        raan.append(np.degrees(raan_var))
+        raan0 = raan_var
+    print(raan)
+    beta = [np.degrees(beta_angle(x, inc, y)) for x,y in zip(data,raan)]
+
+    df = pd.DataFrame(beta, columns=['Beta'])
     import plotly.express as px
-
-    fig = px.scatter_geo(data_frame=df, lat = 'latitude', lon = 'longitude')
+    fig = px.line(df)
     fig.show()

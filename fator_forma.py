@@ -79,17 +79,20 @@ def fator_forma_classico(vetor_posicao, angulo):
     """
     import numpy as np
 
-    raio_terra = 6371
+    raio_terra = 6371.0
     k = raio_terra/(vetor_posicao)
     d = angulo # angulo da face do satelite
 
     if 0<=d<=np.arccos(k):
         FS = k**2*np.cos(d)
 
-    if np.arccos(k) < d < np.pi - np.arccos(k):
+    elif np.arccos(k) < d < np.pi - np.arccos(k):
         FS = k**2*np.cos(d) + (1/np.pi)*(np.pi/2 - ((1 - k**2)*(k**2 - np.cos(d)**2))**(0.5) - np.arcsin((1 - k**2)**0.5/(np.sin(d)))
          - k**2*np.cos(d)*np.arccos((1/k**2 - 1)**0.5*np.tan(d)**-1))
-    if np.pi - np.arccos(k) <= d <= np.pi:
+    elif np.pi - np.arccos(k) <= d <= np.pi:
         FS = 0
-
     return FS
+
+if __name__ == '__main__':
+    import numpy as np
+    print(fator_forma_classico(7000, np.pi*2))

@@ -98,7 +98,6 @@ def calor_incidente(posicao_orientacao, radiacao_solar, radiacao_terra, emissivi
     for i in range(0, len(prop_orb), 1):
         vetor_posicao.append(np.array([np.array(Posicao_orientacao.iloc[i, 3]), np.array(Posicao_orientacao.iloc[i, 4]),
                       np.array(Posicao_orientacao.iloc[i, 5])]))
-
     '''Inicio do calculo de radiacao'''
     print('Calculando radiacao solar')
     Qs1 = []

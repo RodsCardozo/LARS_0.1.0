@@ -10,12 +10,12 @@
 
 """
 
-Semi_Eixo_Maior = 6991.0  
+Semi_Eixo_Maior = 6771.0  
 excentricidade = 0.0
 Nodo ascendente = 0.0
 Argumento do perigeu = 0.0  
 Anomalia verdadeira = 0.0 
-Inclinacao = 97.0
+Inclinacao = 56.0
 mu = 398600.0  
 J2 = 1.08263e-3  
 Raio da Terra = 6378.0  
@@ -28,13 +28,13 @@ Velocidade angular em TETA = 0.0
 Velocidade angular em PHI = 0.0
 
 PSI0 = 0.0
-TETA0 = 97.0
+TETA0 = 51.6
 PHI0 = 0.0
 
 "Inserir data inicial no formato apresentado %m/%d/%Y %H:%M:%S"
 
 data = 11/10/2022 18:00:00
-Passo de Tempo = 10.0
+Passo de Tempo = 60.0
 Divisoes da Terra = 20
 
 " Geometria do Cubsat "
