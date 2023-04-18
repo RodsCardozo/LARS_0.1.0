@@ -104,20 +104,26 @@ def calor_incidente(posicao_orientacao, radiacao_solar, radiacao_terra, emissivi
     Qs4 = []
     Qs5 = []
     Qs6 = []
-
-    for i in range(0, len(vetor_posicao), 1):
+    from tqdm import tqdm
+    for i in tqdm(range(0, len(vetor_posicao), 1), colour='#fcba03'):
 
         PSI = np.arccos(np.dot(vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), Vs / np.linalg.norm(Vs)))
         QSI = np.arcsin(Raio_terra / np.linalg.norm((vetor_posicao[i])))
 
         if PSI + QSI < np.pi:
 
-            A1 = np.array([Posicao_orientacao.iloc[i, 13], Posicao_orientacao.iloc[i, 14], Posicao_orientacao.iloc[i, 15]])
-            A2 = np.array([Posicao_orientacao.iloc[i, 16], Posicao_orientacao.iloc[i, 17], Posicao_orientacao.iloc[i, 18]])
-            A3 = np.array([Posicao_orientacao.iloc[i, 19], Posicao_orientacao.iloc[i, 20], Posicao_orientacao.iloc[i, 21]])
-            A4 = np.array([Posicao_orientacao.iloc[i, 22], Posicao_orientacao.iloc[i, 23], Posicao_orientacao.iloc[i, 24]])
-            A5 = np.array([Posicao_orientacao.iloc[i, 25], Posicao_orientacao.iloc[i, 26], Posicao_orientacao.iloc[i, 27]])
-            A6 = np.array([Posicao_orientacao.iloc[i, 28], Posicao_orientacao.iloc[i, 29], Posicao_orientacao.iloc[i, 30]])
+            A1 = np.array(
+                [Posicao_orientacao.iloc[i, 14], Posicao_orientacao.iloc[i, 15], Posicao_orientacao.iloc[i, 16]])
+            A2 = np.array(
+                [Posicao_orientacao.iloc[i, 17], Posicao_orientacao.iloc[i, 18], Posicao_orientacao.iloc[i, 19]])
+            A3 = np.array(
+                [Posicao_orientacao.iloc[i, 20], Posicao_orientacao.iloc[i, 21], Posicao_orientacao.iloc[i, 22]])
+            A4 = np.array(
+                [Posicao_orientacao.iloc[i, 23], Posicao_orientacao.iloc[i, 24], Posicao_orientacao.iloc[i, 25]])
+            A5 = np.array(
+                [Posicao_orientacao.iloc[i, 26], Posicao_orientacao.iloc[i, 27], Posicao_orientacao.iloc[i, 28]])
+            A6 = np.array(
+                [Posicao_orientacao.iloc[i, 29], Posicao_orientacao.iloc[i, 30], Posicao_orientacao.iloc[i, 31]])
 
             k1 = np.dot(A1/np.linalg.norm(A1), Vs)
             k2 = np.dot(A2/np.linalg.norm(A2), Vs)
@@ -177,18 +183,15 @@ def calor_incidente(posicao_orientacao, radiacao_solar, radiacao_terra, emissivi
     Qalb5 = []
     Qalb6 = []
 
-    from tqdm import tqdm
-
     for i in tqdm(range(0, len(vetor_posicao), 1), colour='green'):
 
-        A1 = np.array([Posicao_orientacao.iloc[i, 13], Posicao_orientacao.iloc[i, 14], Posicao_orientacao.iloc[i, 15]])
-        A2 = np.array([Posicao_orientacao.iloc[i, 16], Posicao_orientacao.iloc[i, 17], Posicao_orientacao.iloc[i, 18]])
-        A3 = np.array([Posicao_orientacao.iloc[i, 19], Posicao_orientacao.iloc[i, 20], Posicao_orientacao.iloc[i, 21]])
-        A4 = np.array([Posicao_orientacao.iloc[i, 22], Posicao_orientacao.iloc[i, 23], Posicao_orientacao.iloc[i, 24]])
-        A5 = np.array([Posicao_orientacao.iloc[i, 25], Posicao_orientacao.iloc[i, 26], Posicao_orientacao.iloc[i, 27]])
-        A6 = np.array([Posicao_orientacao.iloc[i, 28], Posicao_orientacao.iloc[i, 29], Posicao_orientacao.iloc[i, 30]])
+        A1 = np.array([Posicao_orientacao.iloc[i, 14], Posicao_orientacao.iloc[i, 15], Posicao_orientacao.iloc[i, 16]])
+        A2 = np.array([Posicao_orientacao.iloc[i, 17], Posicao_orientacao.iloc[i, 18], Posicao_orientacao.iloc[i, 19]])
+        A3 = np.array([Posicao_orientacao.iloc[i, 20], Posicao_orientacao.iloc[i, 21], Posicao_orientacao.iloc[i, 22]])
+        A4 = np.array([Posicao_orientacao.iloc[i, 23], Posicao_orientacao.iloc[i, 24], Posicao_orientacao.iloc[i, 25]])
+        A5 = np.array([Posicao_orientacao.iloc[i, 26], Posicao_orientacao.iloc[i, 27], Posicao_orientacao.iloc[i, 28]])
+        A6 = np.array([Posicao_orientacao.iloc[i, 29], Posicao_orientacao.iloc[i, 30], Posicao_orientacao.iloc[i, 31]])
         phi = (np.dot(Vs, vetor_posicao[i] / np.linalg.norm(vetor_posicao[i])))
-
         if np.pi > phi >= 0:
 
             d1 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A1))
@@ -242,12 +245,12 @@ def calor_incidente(posicao_orientacao, radiacao_solar, radiacao_terra, emissivi
     Qrad6 = []
 
     for i in tqdm(range(0, len(vetor_posicao), 1), colour='cyan'):
-        A1 = np.array([Posicao_orientacao.iloc[i, 13], Posicao_orientacao.iloc[i, 14], Posicao_orientacao.iloc[i, 15]])
-        A2 = np.array([Posicao_orientacao.iloc[i, 16], Posicao_orientacao.iloc[i, 17], Posicao_orientacao.iloc[i, 18]])
-        A3 = np.array([Posicao_orientacao.iloc[i, 19], Posicao_orientacao.iloc[i, 20], Posicao_orientacao.iloc[i, 21]])
-        A4 = np.array([Posicao_orientacao.iloc[i, 22], Posicao_orientacao.iloc[i, 23], Posicao_orientacao.iloc[i, 24]])
-        A5 = np.array([Posicao_orientacao.iloc[i, 25], Posicao_orientacao.iloc[i, 26], Posicao_orientacao.iloc[i, 27]])
-        A6 = np.array([Posicao_orientacao.iloc[i, 28], Posicao_orientacao.iloc[i, 29], Posicao_orientacao.iloc[i, 30]])
+        A1 = np.array([Posicao_orientacao.iloc[i, 14], Posicao_orientacao.iloc[i, 15], Posicao_orientacao.iloc[i, 16]])
+        A2 = np.array([Posicao_orientacao.iloc[i, 17], Posicao_orientacao.iloc[i, 18], Posicao_orientacao.iloc[i, 19]])
+        A3 = np.array([Posicao_orientacao.iloc[i, 20], Posicao_orientacao.iloc[i, 21], Posicao_orientacao.iloc[i, 22]])
+        A4 = np.array([Posicao_orientacao.iloc[i, 23], Posicao_orientacao.iloc[i, 24], Posicao_orientacao.iloc[i, 25]])
+        A5 = np.array([Posicao_orientacao.iloc[i, 26], Posicao_orientacao.iloc[i, 27], Posicao_orientacao.iloc[i, 28]])
+        A6 = np.array([Posicao_orientacao.iloc[i, 29], Posicao_orientacao.iloc[i, 30], Posicao_orientacao.iloc[i, 31]])
 
         d1 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A1))
         d2 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A2))

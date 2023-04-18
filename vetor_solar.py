@@ -136,29 +136,25 @@ def taxa_precessao(ecc, semi_eixo_maior, inc):
     return omega_pre
 
 
-
-
-
-
 if __name__ == '__main__':
     import numpy as np
     beta_iss = beta_angle('03/21/2020 17:00:00', 70.6, 0.0)
     import pandas as pd
     from datetime import datetime, timedelta
-    dia_ini = '01/01/2023 17:00:00'
+    dia_ini = '01/01/2023 18:00:00'
     ini_date = datetime.strptime(dia_ini, "%m/%d/%Y %H:%M:%S")
     data = [ini_date + timedelta(days=x) for x in range(0,365)]
-    inc = 51.6
+    inc = 15
     raan0 = 0.0
     raan = []
     for i in range(0, 365):
-        raan_var = raan0 + taxa_precessao(0.0, 6779.0, inc) * 24 * 60 * 60
+        raan_var = raan0 + taxa_precessao(0.0, 6771.0, inc) * 24 * 60 * 60
 
         raan.append(np.degrees(raan_var))
         raan0 = raan_var
     print(raan)
     beta = [np.degrees(beta_angle(x, inc, y)) for x,y in zip(data,raan)]
-
+    print(beta)
     df = pd.DataFrame(beta, columns=['Beta'])
     import plotly.express as px
     fig = px.line(df)

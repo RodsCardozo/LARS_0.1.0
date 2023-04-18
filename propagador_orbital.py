@@ -169,6 +169,7 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
 
     lat = [latitude0]
     long = [longitude0]
+
     # comeco da integracao
 
     DELTAT = delt
@@ -185,7 +186,9 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
     solution = [[h0, ecc0, true_anomaly0, raan0, inc0, arg_per0, q0, q1, q2, q3, wx3_i, wy3_i, wz3_i]]
     time_simu = [0]
     cont = 0
-    while cont < T:
+    #while cont < T:
+    from tqdm import tqdm
+    for i in  tqdm(range(0,int(T)+1, int(delt)), colour='#9803fc'):
         qi = [h0, ecc0, true_anomaly0, raan0, inc0, arg_per0, q0, q1, q2, q3, wx3_i, wy3_i, wz3_i]
         altitude = rp0 - R_terra
         latitude = lat[-1]
@@ -352,6 +355,11 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
     df4 = pd.DataFrame(time_simu, columns=['Tempo'])
     df = pd.concat([df, df4], axis=1)
 
+    from vetor_solar import beta_angle
+    beta = [np.degrees(beta_angle(x, np.degrees(inc0), y)) for x,y in zip(df['Data'].to_list(), solucao['raan'].to_list())]
+    df5 = pd.DataFrame(beta, columns=['Beta'])
+
+    df = pd.concat([df,df5], axis=1)
     import os.path
     df.to_csv(os.path.join('./results/', 'dados_ECI.csv'), sep=',')
 
