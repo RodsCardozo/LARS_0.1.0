@@ -3,18 +3,51 @@
 # plotagens orbitais #
 def plot_animacao_orbita(dataframe, size):
     import plotly.express as px
+    import plotly.graph_objs as go
     df = dataframe
     size = size
     fig = px.scatter_3d(df, x="X_ECI", y="Y_ECI", z="Z_ECI",
                         range_x=[-size, size],
                         range_y=[-size, size],
                         range_z=[-size, size],
-                        animation_group="Data",
                         animation_frame="Tempo",
                         title="Spaceflight",
-                        size_max=100, opacity=0.7)
+                        size_max=100, opacity=0.7
 
+                        )
 
+    import numpy as np
+
+    # Raio da Terra
+    Re = 6371.0
+
+    # Define as coordenadas x, y e z para a superfície esférica da Terra
+    phi, theta = np.linspace(0, np.pi, 100), np.linspace(0, 2 * np.pi, 100)
+    x = Re*np.outer(np.sin(theta), np.cos(phi))
+    y = Re*np.outer(np.sin(theta), np.sin(phi))
+    z = Re*np.outer(np.cos(theta), np.ones_like(phi))
+
+    # Adiciona a superfície esférica da Terra
+    fig.add_trace(go.Surface(x=x, y=y, z=z, colorscale='earth', showscale=False))
+
+    # Adiciona um traçado da orbita
+    x1 = df['X_ECI'].to_list()
+    y1 = df['Y_ECI'].to_list()
+    z1 = df['Z_ECI'].to_list()
+    fig.add_trace(go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', marker=dict(size=5, color='red'), name='Sat 1'))
+
+    # Define o layout da figura
+    fig.update_layout(scene=dict(
+        xaxis=dict(title='X', autorange=True),
+        yaxis=dict(title='Y', autorange=True),
+        zaxis=dict(title='Z', autorange=True)),
+        updatemenus=[dict(type='buttons', showactive=False, buttons=[dict(method='animate',
+                                                                          args=[None, dict(
+                                                                              frame=dict(duration=50, redraw=True),
+                                                                              fromcurrent=True,
+                                                                              transition=dict(duration=0,
+                                                                                              easing='linear'),
+                                                                              mode='immediate')])])])
     fig.show()
     return
 
