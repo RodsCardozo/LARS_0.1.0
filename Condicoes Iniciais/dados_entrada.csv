@@ -5,21 +5,21 @@
 
     Título do Algoritmo= Dados de entrada para simulação orbital e radiação incidente
     Autor= Rodrigo S. Cardozo
-    Versão= 0.0.5
+    Versão= 0.1.0
     Data= 24/10/2022
 
 """
 
-Semi_Eixo_Maior = 6771.0  
-excentricidade = 0.0
+Semi_Eixo_Maior = 26560.0 
+excentricidade = 0.74
 Nodo ascendente = 0.0
-Argumento do perigeu = 0.0  
+Argumento do perigeu = 0.0 
 Anomalia verdadeira = 0.0 
-Inclinacao = 100.0
+Inclinacao = 63.4
 mu = 398600.0  
 J2 = 1.08263e-3  
 Raio da Terra = 6378.0  
-numero de orbitas = 1 
+numero de orbitas = 2 
 
 "Dados da atitude"
 
@@ -27,8 +27,8 @@ Velocidade angular em PSI = 0.0
 Velocidade angular em TETA = 0.0
 Velocidade angular em PHI = 0.0
 
-PSI0 = 60.0
-TETA0 = 100.0
+PSI0 = 0.0
+TETA0 = 63.4
 PHI0 = 0.0
 
 "Inserir data inicial no formato apresentado %m/%d/%Y %H:%M:%S"

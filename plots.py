@@ -43,7 +43,7 @@ def plot_animacao_orbita(dataframe, size):
         zaxis=dict(title='Z', autorange=True)),
         updatemenus=[dict(type='buttons', showactive=False, buttons=[dict(method='animate',
                                                                           args=[None, dict(
-                                                                              frame=dict(duration=50, redraw=True),
+                                                                              frame=dict(duration=0.1, redraw=True),
                                                                               fromcurrent=True,
                                                                               transition=dict(duration=0,
                                                                                               easing='linear'),
