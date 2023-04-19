@@ -53,8 +53,8 @@ Raan = float(df.iloc[2, 0])  # ascencao direita do nodo ascendente
 arg_per = (float(df.iloc[3, 0]))  # argumento do perigeu
 true_anomaly = (float(df.iloc[4, 0]))  # anomalia verdadeira
 b = (float(df.iloc[5, 0]))  # inclinacao
-if b < 1.0:
-    inc = 1.0
+if b < 0.01:
+    inc = 0.1
 else:
     inc = b
 mu = float(df.iloc[6, 0])  # constante gravitacional da terra
@@ -91,14 +91,14 @@ Propagacao_orbital = propagador_orbital(data, SMA, ecc, Raan, arg_per, true_anom
                                         phi0, PSIP, TETAP, PHIP, massa, largura, comprimento, altura)
 
 
-'''calor_total = calor_incidente(Propagacao_orbital, Is, Ir, e, ai, gama)'''
+calor_total = calor_incidente(Propagacao_orbital, Is, Ir, e, ai, gama)
 size = SMA*1.1
 plot_animacao = plots.plot_animacao_orbita(Propagacao_orbital, size)
 
-'''plot_calor_sol = plots.calor_solar(calor_total)
+plot_calor_sol = plots.calor_solar(calor_total)
 plot_calor_Terra = plots.calor_IR_Terra(calor_total)
 plot_calor_albedo = plots.calor_albedo(calor_total)
-plot_calor_total = plots.calor_total(calor_total)'''
+plot_calor_total = plots.calor_total(calor_total)
 
 df = pd.read_csv(resource_path("results\ECEF_R.csv"), sep=',', engine='python', on_bad_lines='skip')
 plot_groundtrack3d = plots.plot_groundtrack_3D(df)

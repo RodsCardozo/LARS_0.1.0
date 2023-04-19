@@ -154,20 +154,20 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
         phi / 2)))  # quaternion q3
 
     # Matriz de rotacao
-    x_rot = np.cos(np.radians(argumento_perigeu + anomalia_verdadeira)) * np.cos(np.radians(raan)) - np.cos(np.radians(inclinacao)) \
-            * np.sin(np.radians(argumento_perigeu + anomalia_verdadeira)) * np.sin(np.radians(raan))
+    x_rot = np.cos(np.radians(argumento_perigeu)) * np.cos(np.radians(raan)) - np.cos(np.radians(inclinacao)) \
+            * np.sin(np.radians(argumento_perigeu)) * np.sin(np.radians(raan))
 
-    y_rot = np.cos(np.radians(argumento_perigeu + anomalia_verdadeira)) * np.sin(np.radians(raan)) + np.cos(np.radians(inclinacao))\
-            * np.sin(np.radians(argumento_perigeu + anomalia_verdadeira)) * np.cos(np.radians(raan))
+    y_rot = np.cos(np.radians(argumento_perigeu)) * np.sin(np.radians(raan)) + np.cos(np.radians(inclinacao))\
+            * np.sin(np.radians(argumento_perigeu)) * np.cos(np.radians(raan))
 
-    z_rot = np.sin(np.radians(inclinacao)) * np.sin(np.radians(argumento_perigeu + anomalia_verdadeira))
+    z_rot = np.sin(np.radians(inclinacao)) * np.sin(np.radians(argumento_perigeu))
 
     b = [x_rot, y_rot, z_rot]
     Posi_ini = [rp0*x for x in b]
     lamb_e = raan # (np.arctan2(Posi_ini[1], Posi_ini[0]))
-    '''latitude0 = np.degrees((np.arcsin(Posi_ini[2] / np.linalg.norm(Posi_ini))))
-    longitude0 = np.degrees((np.arctan2(Posi_ini[1], Posi_ini[0])))'''
-    import pyproj
+    latitude0 = np.degrees((np.arcsin(Posi_ini[2] / np.linalg.norm(Posi_ini))))
+    longitude0 = np.degrees((np.arctan2(Posi_ini[1], Posi_ini[0])))
+    '''import pyproj
     input_proj = pyproj.CRS.from_epsg(4328)
 
     # Define o sistema de coordenadas de saída (geográfico)
@@ -177,7 +177,7 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
     transformer = pyproj.transformer.Transformer.from_crs(input_proj, output_proj)
 
     # Converte as coordenadas do sistema de coordenadas geocêntricas para o sistema de coordenadas geográficas
-    longitude0, latitude0, alt = transformer.transform(b[0] * 1000.0, b[1] * 1000.0, b[2] * 1000.0, radians=True)
+    longitude0, latitude0, alt = transformer.transform(b[0] * 1000.0, b[1] * 1000.0, b[2] * 1000.0, radians=True)'''
 
     lat = [np.degrees(latitude0)]
     long = [np.degrees(longitude0)]
@@ -247,16 +247,16 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
 
         lamb_e = lamb_e - ((2*np.pi)/(23*3600 + 56*60 + 4))*DELTAT
 
-        X_ECEF = ((np.cos(lamb_e) * np.cos(arg_per0 + true_anomaly0) - np.sin(lamb_e) * np.sin(arg_per0 + true_anomaly0) * np.cos(inc0)) * xp
-                 + (-np.cos(lamb_e) * np.sin(arg_per0 + true_anomaly0) - np.sin(lamb_e) * np.cos(inc0) * np.cos(arg_per0 + true_anomaly0)) * yp
+        X_ECEF = ((np.cos(lamb_e) * np.cos(arg_per0) - np.sin(lamb_e) * np.sin(arg_per0) * np.cos(inc0)) * xp
+                 + (-np.cos(lamb_e) * np.sin(arg_per0) - np.sin(lamb_e) * np.cos(inc0) * np.cos(arg_per0)) * yp
                  + np.sin(lamb_e) * np.sin(inc0) * zp)
 
-        Y_ECEF = ((np.sin(lamb_e) * np.cos(arg_per0 + true_anomaly0) + np.cos(lamb_e) * np.cos(inc0) * np.sin(arg_per0 + true_anomaly0)) * xp
-                 + (-np.sin(lamb_e) * np.sin(arg_per0 + true_anomaly0) + np.cos(lamb_e) * np.cos(inc0) * np.cos(arg_per0 + true_anomaly0)) * yp
+        Y_ECEF = ((np.sin(lamb_e) * np.cos(arg_per0) + np.cos(lamb_e) * np.cos(inc0) * np.sin(arg_per0)) * xp
+                 + (-np.sin(lamb_e) * np.sin(arg_per0) + np.cos(lamb_e) * np.cos(inc0) * np.cos(arg_per0)) * yp
                  - np.cos(lamb_e) * np.sin(inc0) * zp)
 
-        Z_ECEF = (np.sin(inc0) * np.sin(arg_per0 + true_anomaly0) * xp
-                 + np.sin(inc0) * np.cos(arg_per0 + true_anomaly0) * yp
+        Z_ECEF = (np.sin(inc0) * np.sin(arg_per0) * xp
+                 + np.sin(inc0) * np.cos(arg_per0) * yp
                  + np.cos(inc0) * zp)
 
         r.append(np.array([X_ECEF, Y_ECEF, Z_ECEF]))
@@ -309,14 +309,13 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
         q1 = solucao.iloc[i, 7]
         q2 = solucao.iloc[i, 8]
         q3 = solucao.iloc[i, 9]
-        a = np.arccos(2*(q0**2 + q3**2) - 1)
-
-        if np.linalg.norm(a) < 0.000000001:
-            teta.append(0.0)
-        elif a == -np.pi:
-            teta.append(0.0)
+        a = (2*(q0**2 + q3**2) - 1)
+        if a >= 1:
+            teta.append(np.arccos(1))
+        elif a <= -1:
+            teta.append(np.arccos(-1))
         else:
-            teta.append(a)
+            teta.append(np.arccos(a))
     dfteta = pd.DataFrame(teta, columns=['TETA'])
     df = pd.concat([df, dfteta], axis=1)
 
@@ -380,7 +379,7 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
     solucao.to_csv(os.path.join('./results/', 'solver.csv'), sep=',')
     r = pd.DataFrame(r, columns=['rx', 'ry', 'rz'])
     r['latitude'] = np.degrees(np.arcsin(r['rz'] / (r['rx']**2 + r['ry']**2 + r['rz']**2)**0.5))
-    r['longitude'] = np.degrees(np.arctan2(r['ry'],r['rx']))
+    r['longitude'] = np.degrees(np.arctan2(r['ry'], r['rx']))
     r['end'] = 'end'
     r.to_csv(os.path.join('./results/', 'ECEF_R.csv'), sep=',', index=False)
 

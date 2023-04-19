@@ -10,12 +10,12 @@
 
 """
 
-Semi_Eixo_Maior = 26560.0 
-excentricidade = 0.74
+Semi_Eixo_Maior = 6760.0 
+excentricidade = 0.0
 Nodo ascendente = 0.0
 Argumento do perigeu = 0.0 
 Anomalia verdadeira = 0.0 
-Inclinacao = 63.4
+Inclinacao = 0.0
 mu = 398600.0  
 J2 = 1.08263e-3  
 Raio da Terra = 6378.0  
@@ -28,7 +28,7 @@ Velocidade angular em TETA = 0.0
 Velocidade angular em PHI = 0.0
 
 PSI0 = 0.0
-TETA0 = 63.4
+TETA0 = 0.0
 PHI0 = 0.0
 
 "Inserir data inicial no formato apresentado %m/%d/%Y %H:%M:%S"
