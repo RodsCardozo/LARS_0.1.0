@@ -90,16 +90,21 @@ gama = float(df.iloc[31, 0])  # refletividade da Terra
 Propagacao_orbital = propagador_orbital(data, SMA, ecc, Raan, arg_per, true_anomaly, inc, num_orbita, delt, psi0, teta0,
                                         phi0, PSIP, TETAP, PHIP, massa, largura, comprimento, altura)
 
-
+'''
 calor_total = calor_incidente(Propagacao_orbital, Is, Ir, e, ai, gama)
-size = SMA*1.1
-plot_animacao = plots.plot_animacao_orbita(Propagacao_orbital, size)
+
+
 
 plot_calor_sol = plots.calor_solar(calor_total)
 plot_calor_Terra = plots.calor_IR_Terra(calor_total)
 plot_calor_albedo = plots.calor_albedo(calor_total)
-plot_calor_total = plots.calor_total(calor_total)
+plot_calor_total = plots.calor_total(calor_total)'''
+size = SMA*1.1
+plot_animacao = plots.plot_animacao_orbita(Propagacao_orbital, size)
+'''df = pd.read_csv(resource_path("results\ECEF_R.csv"), sep=',', engine='python', on_bad_lines='skip')
+plot_groundtrack3d = plots.plot_groundtrack_3D(df)
+plot_groundtrack2d = plots.plot_groundtrack_2D(df)'''
 
-df = pd.read_csv(resource_path("results\ECEF_R.csv"), sep=',', engine='python', on_bad_lines='skip')
+df = pd.read_csv(resource_path("results\dados_ECI.csv"), sep=',', engine='python', on_bad_lines='skip')
 plot_groundtrack3d = plots.plot_groundtrack_3D(df)
 plot_groundtrack2d = plots.plot_groundtrack_2D(df)
