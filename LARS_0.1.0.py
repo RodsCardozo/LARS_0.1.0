@@ -87,24 +87,73 @@ e = float(df.iloc[29, 0])     # emissividade Terra
 ai = float(df.iloc[30, 0])    # absortividade do satelite
 gama = float(df.iloc[31, 0])  # refletividade da Terra
 
+from time import time
+
+inicio = datetime.now()
+
+# simulacao orbital
 Propagacao_orbital = propagador_orbital(data, SMA, ecc, Raan, arg_per, true_anomaly, inc, num_orbita, delt, psi0, teta0,
                                         phi0, PSIP, TETAP, PHIP, massa, largura, comprimento, altura)
 
-'''
+# simulacao radiacao
 calor_total = calor_incidente(Propagacao_orbital, Is, Ir, e, ai, gama)
 
+fim = datetime.now()
+var = fim - inicio
 
+# print dados entrada
+tempo = [inicio, fim, var]
+dados_orbita = [SMA, ecc, Raan, arg_per, true_anomaly, inc, num_orbita, delt]
+print('|----------------| ' \
+               '\n' \
+               '| Nova simulacao | ' \
+               '\n' \
+               '|----------------| ' \
+               '\n' \
+               f'Tempo de inicio: {tempo[0]} ' \
+               f'\n' \
+               f'Tempo final: {tempo[1]} ' \
+               f'\n' \
+               f'Tempo total de simulacao: {tempo[2]} ' \
+               f'\n' \
+               f'|------------------| ' \
+               f'\n' \
+               '| Dados da orbita: | ' \
+               '\n' \
+               '|------------------| ' \
+               '\n' \
+               f'Semi eixo = {dados_orbita[0]} ' \
+               f'\n' \
+               f'Excentricidade = {dados_orbita[1]} ' \
+               f'\n' \
+               f'Raan = {dados_orbita[2]} ' \
+               f'\n' \
+               f'Argumento do perigeu = {dados_orbita[3]} ' \
+               f'\n' \
+               f'Anomalia verdadeira = {dados_orbita[4]} ' \
+               f'\n' \
+               f'Inclinação = {dados_orbita[5]} ' \
+               f'\n' \
+               f'Numero de orbitas = {dados_orbita[6]} ' \
+               f'\n' \
+               f'Passo de integraçao = {dados_orbita[7]} ' \
+               f'\n')
 
 plot_calor_sol = plots.calor_solar(calor_total)
 plot_calor_Terra = plots.calor_IR_Terra(calor_total)
 plot_calor_albedo = plots.calor_albedo(calor_total)
-plot_calor_total = plots.calor_total(calor_total)'''
+plot_calor_total = plots.calor_total(calor_total)
 size = SMA*1.1
 plot_animacao = plots.plot_animacao_orbita(Propagacao_orbital, size)
+
+
+'''from bot_simulacao import bot_orbital
+bot_orbital(tempo, dados_orbita)'''
+
 '''df = pd.read_csv(resource_path("results\ECEF_R.csv"), sep=',', engine='python', on_bad_lines='skip')
 plot_groundtrack3d = plots.plot_groundtrack_3D(df)
 plot_groundtrack2d = plots.plot_groundtrack_2D(df)'''
 
-df = pd.read_csv(resource_path("results\dados_ECI.csv"), sep=',', engine='python', on_bad_lines='skip')
+'''df = pd.read_csv(resource_path("results\dados_ECI.csv"), sep=',', engine='python', on_bad_lines='skip')
 plot_groundtrack3d = plots.plot_groundtrack_3D(df)
-plot_groundtrack2d = plots.plot_groundtrack_2D(df)
+plot_groundtrack2d = plots.plot_groundtrack_2D(df)'''

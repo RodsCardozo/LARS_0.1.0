@@ -19,7 +19,7 @@ Inclinacao = 52.0
 mu = 398600.0  
 J2 = 1.08263e-3  
 Raio da Terra = 6378.0  
-numero de orbitas = 5
+numero de orbitas = 1
 
 "Dados da atitude"
 
@@ -28,7 +28,7 @@ Velocidade angular em TETA = 0.0
 Velocidade angular em PHI = 0.0
 
 PSI0 = 0.0
-TETA0 = 51.0
+TETA0 = 52.0
 PHI0 = 0.0
 
 "Inserir data inicial no formato apresentado %m/%d/%Y %H:%M:%S"

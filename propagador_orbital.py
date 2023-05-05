@@ -178,14 +178,13 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
 
     ano = [np.cos(np.radians(anomalia_verdadeira)), np.sin(np.radians(anomalia_verdadeira)), 0]
     r = [((h1**2/mu)*1/(1 + excentricidade*np.cos(np.radians(anomalia_verdadeira)))) * a for a in ano]
-    print(r)
+
     Posi_ini = np.dot(np.transpose(Q_rot), r)
-    print(Posi_ini)
+
     lamb_e = raan0 # (np.arctan2(Posi_ini[1], Posi_ini[0]))
     latitude0 = np.degrees((np.arcsin(Posi_ini[2] / np.linalg.norm(Posi_ini))))
     longitude0 = np.degrees((np.arctan2(Posi_ini[1], Posi_ini[0])))
-    print(f'latitude0: {latitude0}')
-    print(f'longitude0: {longitude0}')
+
     '''import pyproj
     input_proj = pyproj.CRS.from_epsg(4328)
 

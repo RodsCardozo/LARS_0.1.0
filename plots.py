@@ -4,6 +4,7 @@
 def plot_animacao_orbita(dataframe, size):
     import plotly.express as px
     import plotly.graph_objs as go
+    import plotly.io as pio
     df = dataframe
     size = size
     fig = px.scatter_3d(df, x="X_ECI", y="Y_ECI", z="Z_ECI",
@@ -49,11 +50,12 @@ def plot_animacao_orbita(dataframe, size):
                                                                                               easing='linear'),
                                                                               mode='immediate')])])])
     fig.show()
+    pio.write_image(fig, 'imagens_resultado/animacao_3d.png')
     return
 
 def plot_groundtrack_3D(dataframe):
     import plotly.graph_objects as go
-
+    import plotly.io as pio
     df = dataframe
 
     scl = ['rgb(213,62,79)', 'rgb(244,109,67)', 'rgb(253,174,97)', \
@@ -106,12 +108,11 @@ def plot_groundtrack_3D(dataframe):
             )
         )
     )
-
+    pio.write_image(fig, 'imagens_resultado/groundtrack_3D.png')
     return fig.show()
 
 def plot_groundtrack_2D(dataframe):
-
-
+    import plotly.io as pio
     import plotly.graph_objects as go
     import plotly.io as pio
     from PIL import Image
@@ -163,7 +164,7 @@ def plot_groundtrack_2D(dataframe):
 
         )
     )
-
+    pio.write_image(fig, 'imagens_resultado/groundtrack_2D.png')
     fig.show()
     return
 def plot_ground2d_novo(dataframe):
@@ -247,6 +248,7 @@ def plot_ground2d_novo(dataframe):
 
 def calor_solar(dataframe):
     import plotly.express as px
+    import plotly.io as pio
     Q_sol = dataframe
     linhas = px.line(Q_sol, y=['Solar 1', 'Solar 2', 'Solar 3', 'Solar 4', 'Solar 5', 'Solar 6'])
 
@@ -277,11 +279,12 @@ def calor_solar(dataframe):
                       xaxis_title='Posição Orbital',
                       yaxis_title='Radiação [W/m^2]')
     linhas.show()
-
+    pio.write_image(linhas, 'imagens_resultado/radiacao_solar.png')
     return
 
 def calor_albedo(dataframe):
     import plotly.express as px
+    import plotly.io as pio
     Q_alb = dataframe
     linhas = px.line(Q_alb, y=['Albedo 1', 'Albedo 2', 'Albedo 3', 'Albedo 4', 'Albedo 5', 'Albedo 6'])
     linhas.update_layout(title=dict(font=dict(color = 'black'),
@@ -311,10 +314,11 @@ def calor_albedo(dataframe):
                       xaxis_title='Posição Orbital',
                       yaxis_title='Radiação [W/m^2]')
     linhas.show()
+    pio.write_image(linhas, 'imagens_resultado/radiacao_albedo.png')
     return
 
 def calor_IR_Terra(dataframe):
-
+    import plotly.io as pio
     import plotly.express as px
     Q_ir = dataframe
     linhas = px.line(Q_ir, y = ['IR Terra 1', 'IR Terra 2', 'IR Terra 3', 'IR Terra 4', 'IR Terra 5', 'IR Terra 6'])
@@ -345,10 +349,11 @@ def calor_IR_Terra(dataframe):
                       xaxis_title='Posição Orbital',
                       yaxis_title='Radiação [W/m^2]')
     linhas.show()
+    pio.write_image(linhas, 'imagens_resultado/radiacao_IR.png')
     return
 
 def calor_total(dataframe):
-
+    import plotly.io as pio
     import plotly.express as px
     Q_total = dataframe
     linhas = px.line(Q_total, y=['Total 1', 'Total 2', 'Total 3', 'Total 4', 'Total 5', 'Total 6'])
@@ -379,5 +384,5 @@ def calor_total(dataframe):
                       xaxis_title='Posição Orbital',
                       yaxis_title='Radiação [W/m^2]')
     linhas.show()
-
+    pio.write_image(linhas, 'imagens_resultado/radiacao_total.png')
     return
