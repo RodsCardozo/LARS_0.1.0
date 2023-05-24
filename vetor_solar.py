@@ -136,7 +136,7 @@ def taxa_precessao(ecc, semi_eixo_maior, inc):
     return omega_pre
 
 
-if __name__ == '__main__':
+'''if __name__ == '__main__':
     import numpy as np
     beta_iss = beta_angle('03/21/2020 17:00:00', 70.6, 0.0)
     import pandas as pd
@@ -158,4 +158,19 @@ if __name__ == '__main__':
     df = pd.DataFrame(beta, columns=['Beta'])
     import plotly.express as px
     fig = px.line(df)
-    fig.show()
+    fig.show()'''
+
+from datetime import datetime, timedelta
+inicio = datetime.now()
+dias = [inicio + timedelta(days=x) for x in range(0,365)]
+sol_dia = [vetor_solar(dia) for dia in dias]
+
+import pandas as pd
+import numpy as np
+df = pd.DataFrame(sol_dia, columns=['x', 'y', 'z'])
+print(df)
+df['latitude'] = np.degrees(np.arcsin(df['z']) / np.linalg.norm([df['x'], df['y'], df['z']]))
+df['longitude'] = np.degrees(np.arctan2(df['y'], df['x']))
+
+from plots import plot_groundtrack_2D
+plot_groundtrack_2D(df)

@@ -417,7 +417,7 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
     r['longitude'] = np.degrees(np.arctan2(r['ry'], r['rx']))
     r['r'] = np.sqrt(r['rx']**2 + r['ry']**2 + r['rz']**2)
     r['vel'] = v
-    r['vel_anali'] =  np.sqrt(((mu/h0) * (1 + excentricidade*np.cos(solucao['anomalia_verdadeira'])))**2 + ((mu/h0) * excentricidade*np.sin(solucao['anomalia_verdadeira'])))
+    r['vel_anali'] = np.sqrt(((mu/h0) * (1 + excentricidade*np.cos(solucao['anomalia_verdadeira'])))**2 + ((mu/h0) * excentricidade*np.sin(solucao['anomalia_verdadeira'])))
     r['end'] = 'end'
     r.to_csv(os.path.join('./results/', 'ECEF_R.csv'), sep=',')
 
