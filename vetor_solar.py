@@ -1,5 +1,4 @@
 def vetor_solar(date):
-
     """
     :param date: date of interest
     :return: solar vector
@@ -132,7 +131,7 @@ def taxa_precessao(ecc, semi_eixo_maior, inc):
     mu = 398600
     R_E = 6371.0
     j2 = 0.0010826
-    omega_pre = -((3 * math.sqrt(mu) * j2 * R_E**2) / (2 * (1 - ecc**2)**2 * semi_eixo_maior**(7/2))) * math.cos(np.radians(inc))
+    omega_pre = -((3 * math.sqrt(mu) * j2 * R_E**2) / (2 * (1 - ecc**2)**2 * semi_eixo_maior**(7/2))) * math.cos(math.radians(inc))
     return omega_pre
 
 
@@ -160,17 +159,33 @@ def taxa_precessao(ecc, semi_eixo_maior, inc):
     fig = px.line(df)
     fig.show()'''
 
-from datetime import datetime, timedelta
-inicio = datetime.now()
+'''from datetime import datetime, timedelta
+inicio = datetime(day=20, month=3, year=2023, hour=12, minute=0)
 dias = [inicio + timedelta(days=x) for x in range(0,365)]
 sol_dia = [vetor_solar(dia) for dia in dias]
 
 import pandas as pd
 import numpy as np
-df = pd.DataFrame(sol_dia, columns=['x', 'y', 'z'])
-print(df)
-df['latitude'] = np.degrees(np.arcsin(df['z']) / np.linalg.norm([df['x'], df['y'], df['z']]))
-df['longitude'] = np.degrees(np.arctan2(df['y'], df['x']))
 
+lat = []
+
+for i in range(0, 365):
+
+    if np.sqrt((sol_dia[i][1] / np.linalg.norm(sol_dia[i]))**2) > 1.0:
+        lat.append(np.degrees(np.arcsin(1.0)))
+    else:
+        lat.append(np.degrees(np.arcsin(sol_dia[i][2] / np.linalg.norm(sol_dia[i]))))
+
+long = []
+for i in range(0, len(sol_dia)):
+    long.append(np.degrees(np.arctan2(sol_dia[i][1], sol_dia[i][0])))
+
+
+
+
+df = pd.DataFrame(sol_dia, columns=['x', 'y', 'z'])
+df['latitude'] = lat
+df['longitude'] = long
+print(df)
 from plots import plot_groundtrack_2D
-plot_groundtrack_2D(df)
+plot_groundtrack_2D(df)'''

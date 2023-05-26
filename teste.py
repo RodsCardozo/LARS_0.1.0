@@ -223,7 +223,7 @@ for i in range(0,10):
       'densidade': 2700.0,
       'condutividade térmica': 200,
       'calor especifico': 920.0'''
-
+'''
 class Face:
 
     def __init__(self, nome, x, y, z, Lx, Ly, Lz, n, e, a, rho, k, cp):
@@ -249,4 +249,52 @@ face2 = Face('Face2', 0.0, 0.0, -15.0, 0.1, 0.1, 0.02, 'k', e=0.05, a=0.09,
 
 faces = [face1, face2]
 for i in faces:
-    print(i.cp)
+    print(i.cp)'''
+
+import tkinter as tk
+from tkinter import ttk
+
+# Função para executar a simulação com base nos parâmetros inseridos
+def executar_simulacao():
+    # Obtenha os parâmetros inseridos nas abas
+    parametro1 = aba1_entry.get()
+    parametro2 = aba2_entry.get()
+    # Realize a simulação com base nos parâmetros
+    # (substitua esta parte com a lógica da sua simulação)
+
+# Crie a janela principal
+janela = tk.Tk()
+janela.title("Simulação Numérica")
+
+# Crie as abas
+abas = ttk.Notebook(janela)
+
+# Aba 1
+aba1 = ttk.Frame(abas)
+abas.add(aba1, text="Aba 1")
+
+# Adicione widgets à Aba 1
+aba1_label = ttk.Label(aba1, text="Parâmetro 1:")
+aba1_label.pack()
+aba1_entry = ttk.Entry(aba1)
+aba1_entry.pack()
+
+# Aba 2
+aba2 = ttk.Frame(abas)
+abas.add(aba2, text="Aba 2")
+
+# Adicione widgets à Aba 2
+aba2_label = ttk.Label(aba2, text="Parâmetro 2:")
+aba2_label.pack()
+aba2_entry = ttk.Entry(aba2)
+aba2_entry.pack()
+
+# Botão para executar a simulação
+botao_executar = ttk.Button(janela, text="Executar Simulação", command=executar_simulacao)
+botao_executar.pack()
+
+# Empacote as abas
+abas.pack()
+
+# Inicie o loop principal da interface gráfica
+janela.mainloop()

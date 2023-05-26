@@ -11,7 +11,7 @@
 
 """
 def calor_incidente(posicao_orientacao, radiacao_solar, radiacao_terra, emissividade_terra, absortividade_satelite,
-                    refletividade_terra):
+                    refletividade_terra, data):
 
     """
     :param posicao_orientacao = Dataframe com a orientacao do cubesat e a sua posicao
@@ -42,8 +42,9 @@ def calor_incidente(posicao_orientacao, radiacao_solar, radiacao_terra, emissivi
     ai = absortividade_satelite  # absortividade do satelite
     gama = refletividade_terra   # refletividade da Terra
     Raio_terra = 6371.0
-    Vs = np.array([1, 0, 0]) # vetor solar
-
+    from vetor_solar import vetor_solar
+    Vs = np.array(vetor_solar(data)) # vetor solar
+    print(f'Vetor solar: {Vs}')
     Ni = [[1, 0, 0],
           [0, 1, 0],
           [-1, 0, 0],
@@ -62,24 +63,28 @@ def calor_incidente(posicao_orientacao, radiacao_solar, radiacao_terra, emissivi
              ['N5_X', 'N5_Y', 'N5_Z'],
              ['N6_X', 'N6_Y', 'N6_Z']]
     R = []
+    psi = np.array(Posicao_orientacao['PSI'])
+    teta = np.array(Posicao_orientacao['TETA'])
+    phi = np.array(Posicao_orientacao['PHI'])
+
     for j in range(0, len(Ni), 1):
         for i in range(0, len(Posicao_orientacao), 1):
             A = Ni[j]
 
-            psi = float(Posicao_orientacao.iloc[i, 2])
-            teta = float(Posicao_orientacao.iloc[i, 1])
-            phi = float(Posicao_orientacao.iloc[i, 0])
+            PSI = psi[i]
+            TETA = teta[i]
+            PHI = phi[i]
 
             vetor = A
 
 
-            Q_rot = np.array([[np.cos(psi) * np.cos(phi) - np.sin(psi) * np.sin(phi) * np.cos(teta),
-                               np.cos(psi) * np.sin(phi) + np.sin(psi) * np.cos(teta) * np.cos(phi),
-                               np.sin(psi) * np.sin(teta)],
-                              [-np.sin(psi) * np.cos(phi) - np.cos(psi) * np.sin(phi) * np.cos(teta),
-                               -np.sin(psi) * np.sin(phi) + np.cos(psi) * np.cos(teta) * np.cos(phi),
-                               np.cos(psi) * np.sin(teta)],
-                              [np.sin(teta) * np.sin(phi), -np.sin(teta) * np.cos(phi), np.cos(teta)]])
+            Q_rot = np.array([[np.cos(PHI) * np.cos(PSI) - np.sin(PHI) * np.sin(PHI) * np.cos(TETA),
+                               np.cos(PHI) * np.sin(PSI) + np.sin(PHI) * np.cos(TETA) * np.cos(PSI),
+                               np.sin(PHI) * np.sin(TETA)],
+                              [-np.sin(PHI) * np.cos(PSI) - np.cos(PHI) * np.sin(PSI) * np.cos(TETA),
+                               -np.sin(PHI) * np.sin(PSI) + np.cos(PHI) * np.cos(TETA) * np.cos(PSI),
+                               np.cos(PHI) * np.sin(TETA)],
+                              [np.sin(TETA) * np.sin(PSI), -np.sin(TETA) * np.cos(PSI), np.cos(TETA)]])
 
             Q = np.dot(np.transpose(Q_rot), vetor)
             R1 = Q[0]
@@ -97,6 +102,7 @@ def calor_incidente(posicao_orientacao, radiacao_solar, radiacao_terra, emissivi
     vetor_posicao = [np.array(tupla) for tupla in tupla1]
 
     '''Inicio do calculo de radiacao'''
+
     print('Calculando radiacao solar')
     Qs1 = []
     Qs2 = []
@@ -113,24 +119,41 @@ def calor_incidente(posicao_orientacao, radiacao_solar, radiacao_terra, emissivi
         if PSI + QSI < np.pi:
 
             A1 = np.array(
-                [Posicao_orientacao.iloc[i, 14], Posicao_orientacao.iloc[i, 15], Posicao_orientacao.iloc[i, 16]])
-            A2 = np.array(
-                [Posicao_orientacao.iloc[i, 17], Posicao_orientacao.iloc[i, 18], Posicao_orientacao.iloc[i, 19]])
-            A3 = np.array(
-                [Posicao_orientacao.iloc[i, 20], Posicao_orientacao.iloc[i, 21], Posicao_orientacao.iloc[i, 22]])
-            A4 = np.array(
-                [Posicao_orientacao.iloc[i, 23], Posicao_orientacao.iloc[i, 24], Posicao_orientacao.iloc[i, 25]])
-            A5 = np.array(
-                [Posicao_orientacao.iloc[i, 26], Posicao_orientacao.iloc[i, 27], Posicao_orientacao.iloc[i, 28]])
-            A6 = np.array(
-                [Posicao_orientacao.iloc[i, 29], Posicao_orientacao.iloc[i, 30], Posicao_orientacao.iloc[i, 31]])
+                [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N1_X')],
+                 Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N1_Y')],
+                 Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N1_Z')]])
 
-            k1 = np.dot(A1/np.linalg.norm(A1), Vs)
-            k2 = np.dot(A2/np.linalg.norm(A2), Vs)
-            k3 = np.dot(A3/np.linalg.norm(A3), Vs)
-            k4 = np.dot(A4/np.linalg.norm(A4), Vs)
-            k5 = np.dot(A5/np.linalg.norm(A5), Vs)
-            k6 = np.dot(A6/np.linalg.norm(A6), Vs)
+            A2 = np.array(
+                [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N2_X')],
+                 Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N2_Y')],
+                 Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N2_Z')]])
+
+            A3 = np.array(
+                [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N3_X')],
+                 Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N3_Y')],
+                 Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N3_Z')]])
+
+            A4 = np.array(
+                [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N4_X')],
+                 Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N4_Y')],
+                 Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N4_Z')]])
+
+            A5 = np.array(
+                [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N5_X')],
+                 Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N5_Y')],
+                 Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N5_Z')]])
+
+            A6 = np.array(
+                [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N6_X')],
+                 Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N6_Y')],
+                 Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N6_Z')]])
+
+            k1 = np.dot(A1/np.linalg.norm(A1), Vs/np.linalg.norm(Vs))
+            k2 = np.dot(A2/np.linalg.norm(A2), Vs/np.linalg.norm(Vs))
+            k3 = np.dot(A3/np.linalg.norm(A3), Vs/np.linalg.norm(Vs))
+            k4 = np.dot(A4/np.linalg.norm(A4), Vs/np.linalg.norm(Vs))
+            k5 = np.dot(A5/np.linalg.norm(A5), Vs/np.linalg.norm(Vs))
+            k6 = np.dot(A6/np.linalg.norm(A6), Vs/np.linalg.norm(Vs))
 
             if k1 > 0:
                 qs1 = ai * Is * k1
@@ -185,21 +208,45 @@ def calor_incidente(posicao_orientacao, radiacao_solar, radiacao_terra, emissivi
 
     for i in tqdm(range(0, len(vetor_posicao), 1), colour='green'):
 
-        A1 = np.array([Posicao_orientacao.iloc[i, 14], Posicao_orientacao.iloc[i, 15], Posicao_orientacao.iloc[i, 16]])
-        A2 = np.array([Posicao_orientacao.iloc[i, 17], Posicao_orientacao.iloc[i, 18], Posicao_orientacao.iloc[i, 19]])
-        A3 = np.array([Posicao_orientacao.iloc[i, 20], Posicao_orientacao.iloc[i, 21], Posicao_orientacao.iloc[i, 22]])
-        A4 = np.array([Posicao_orientacao.iloc[i, 23], Posicao_orientacao.iloc[i, 24], Posicao_orientacao.iloc[i, 25]])
-        A5 = np.array([Posicao_orientacao.iloc[i, 26], Posicao_orientacao.iloc[i, 27], Posicao_orientacao.iloc[i, 28]])
-        A6 = np.array([Posicao_orientacao.iloc[i, 29], Posicao_orientacao.iloc[i, 30], Posicao_orientacao.iloc[i, 31]])
-        phi = (np.dot(Vs, vetor_posicao[i] / np.linalg.norm(vetor_posicao[i])))
+        A1 = np.array(
+            [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N1_X')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N1_Y')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N1_Z')]])
+
+        A2 = np.array(
+            [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N2_X')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N2_Y')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N2_Z')]])
+
+        A3 = np.array(
+            [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N3_X')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N3_Y')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N3_Z')]])
+
+        A4 = np.array(
+            [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N4_X')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N4_Y')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N4_Z')]])
+
+        A5 = np.array(
+            [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N5_X')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N5_Y')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N5_Z')]])
+
+        A6 = np.array(
+            [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N6_X')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N6_Y')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N6_Z')]])
+
+        phi = (np.dot(Vs/np.linalg.norm(Vs), vetor_posicao[i] / np.linalg.norm(vetor_posicao[i])))
         if np.pi > phi >= 0:
 
-            d1 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A1))
-            d2 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A2))
-            d3 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A3))
-            d4 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A4))
-            d5 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A5))
-            d6 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A6))
+            d1 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A1 / np.linalg.norm(A1)))
+            d2 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A2 / np.linalg.norm(A2)))
+            d3 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A3 / np.linalg.norm(A3)))
+            d4 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A4 / np.linalg.norm(A4)))
+            d5 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A5 / np.linalg.norm(A5)))
+            d6 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A6 / np.linalg.norm(A6)))
             VP = (np.linalg.norm(-vetor_posicao[i]))
 
             FS1 = FS(VP, d1)
@@ -245,19 +292,42 @@ def calor_incidente(posicao_orientacao, radiacao_solar, radiacao_terra, emissivi
     Qrad6 = []
 
     for i in tqdm(range(0, len(vetor_posicao), 1), colour='cyan'):
-        A1 = np.array([Posicao_orientacao.iloc[i, 14], Posicao_orientacao.iloc[i, 15], Posicao_orientacao.iloc[i, 16]])
-        A2 = np.array([Posicao_orientacao.iloc[i, 17], Posicao_orientacao.iloc[i, 18], Posicao_orientacao.iloc[i, 19]])
-        A3 = np.array([Posicao_orientacao.iloc[i, 20], Posicao_orientacao.iloc[i, 21], Posicao_orientacao.iloc[i, 22]])
-        A4 = np.array([Posicao_orientacao.iloc[i, 23], Posicao_orientacao.iloc[i, 24], Posicao_orientacao.iloc[i, 25]])
-        A5 = np.array([Posicao_orientacao.iloc[i, 26], Posicao_orientacao.iloc[i, 27], Posicao_orientacao.iloc[i, 28]])
-        A6 = np.array([Posicao_orientacao.iloc[i, 29], Posicao_orientacao.iloc[i, 30], Posicao_orientacao.iloc[i, 31]])
+        A1 = np.array(
+            [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N1_X')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N1_Y')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N1_Z')]])
 
-        d1 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A1))
-        d2 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A2))
-        d3 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A3))
-        d4 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A4))
-        d5 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A5))
-        d6 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A6))
+        A2 = np.array(
+            [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N2_X')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N2_Y')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N2_Z')]])
+
+        A3 = np.array(
+            [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N3_X')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N3_Y')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N3_Z')]])
+
+        A4 = np.array(
+            [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N4_X')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N4_Y')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N4_Z')]])
+
+        A5 = np.array(
+            [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N5_X')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N5_Y')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N5_Z')]])
+
+        A6 = np.array(
+            [Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N6_X')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N6_Y')],
+             Posicao_orientacao.iloc[i, Posicao_orientacao.columns.get_loc('N6_Z')]])
+
+        d1 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A1/np.linalg.norm(A1)))
+        d2 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A2/np.linalg.norm(A2)))
+        d3 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A3/np.linalg.norm(A3)))
+        d4 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A4/np.linalg.norm(A4)))
+        d5 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A5/np.linalg.norm(A5)))
+        d6 = np.arccos(np.dot(-vetor_posicao[i] / np.linalg.norm(vetor_posicao[i]), A6/np.linalg.norm(A6)))
         VP = np.linalg.norm(vetor_posicao[i])
 
         FS1 = FS(VP, d1)

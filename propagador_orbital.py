@@ -401,11 +401,11 @@ def propagador_orbital(data: str, semi_eixo: float, excentricidade: float, raan:
     df4 = pd.DataFrame(time_simu, columns=['Tempo'])
     df = pd.concat([df, df4], axis=1)
 
-    from vetor_solar import beta_angle
+    '''from vetor_solar import beta_angle
     beta = [np.degrees(beta_angle(x, np.degrees(inc0), y)) for x,y in zip(df['Data'].to_list(), solucao['raan'].to_list())]
     df5 = pd.DataFrame(beta, columns=['Beta'])
 
-    df = pd.concat([df,df5], axis=1)
+    df = pd.concat([df,df5], axis=1)'''
     '''    df['r'] = np.sqrt((df['X_ECI'] ** 2 + df['Y_ECI'] ** 2 + df['Z_ECI'] ** 2))
     df['end'] = 'end'''
     import os.path

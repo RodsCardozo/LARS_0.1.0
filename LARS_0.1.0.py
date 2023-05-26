@@ -96,7 +96,7 @@ Propagacao_orbital = propagador_orbital(data, SMA, ecc, Raan, arg_per, true_anom
                                         phi0, PSIP, TETAP, PHIP, massa, largura, comprimento, altura)
 
 # simulacao radiacao
-calor_total = calor_incidente(Propagacao_orbital, Is, Ir, e, ai, gama)
+calor_total = calor_incidente(Propagacao_orbital, Is, Ir, e, ai, gama, data)
 
 fim = datetime.now()
 var = fim - inicio
@@ -104,6 +104,8 @@ var = fim - inicio
 # print dados entrada
 tempo = [inicio, fim, var]
 dados_orbita = [SMA, ecc, Raan, arg_per, true_anomaly, inc, num_orbita, delt]
+
+from vetor_solar import beta_angle
 print('|----------------| ' \
                '\n' \
                '| Nova simulacao | ' \
@@ -137,7 +139,8 @@ print('|----------------| ' \
                f'Numero de orbitas = {dados_orbita[6]} ' \
                f'\n' \
                f'Passo de integraçao = {dados_orbita[7]} ' \
-               f'\n')
+               f'\n'
+               f'Angulo Beta: {np.degrees(beta_angle(data, inc, Raan))}')
 
 plot_calor_sol = plots.calor_solar(calor_total)
 plot_calor_Terra = plots.calor_IR_Terra(calor_total)
